@@ -1,8 +1,8 @@
 from tkinter import *
 from tkinter import ttk
 import threading as thr
-from data_logger import *
-import global_vars
+from main.data_logger import *
+import main.global_vars as global_vars
 
 #pip install pyserial requests if you dont have it  
 import time		 #Thingspeak

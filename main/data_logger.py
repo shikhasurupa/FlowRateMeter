@@ -1,7 +1,7 @@
 import serial
 import threading as thr
 import time
-import global_vars
+import main.global_vars as global_vars
 
 #pip install pyserial requests if you dont have it  
 import time		 #Thingspeak
