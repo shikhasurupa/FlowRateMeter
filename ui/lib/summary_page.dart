@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'dashboard.dart';
 import 'api_flask.dart';
@@ -17,26 +18,48 @@ class SummaryPageState extends State<SummaryPage> {
   FlowMeterData? retrievedData;
   bool isLoading = true;
   int navIndex = 0;
+  Timer? _refreshTimer;
+  bool _isFetching = false;
 
   @override
   void initState() {
     super.initState();
     _loadData();
+    _startAutoRefresh();
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startAutoRefresh() {
+    _refreshTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      _loadData();
+    });
   }
 
   void _loadData() async {
+    if (_isFetching) return;
+    _isFetching = true;
+
     try {
       final api = FlowApi();
       final liveData = await api.fetchLive();
+      if (!mounted) return;
       setState(() {
         retrievedData = liveData;
         isLoading = false;
       });
     } catch (e) {
       debugPrint('Error fetching data: $e');
+      if (!mounted) return;
       setState(() {
         isLoading = false;
       });
+    } finally {
+      _isFetching = false;
     }
   }
 
